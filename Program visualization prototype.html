@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeTask Analyzer</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<style>
+* { box-sizing: border-box; margin:0; padding:0; }
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(145deg, #fbc2eb, #a6c1ee);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #2c3e50;
+}
+
+/* Container card */
+.container {
+    background: #ffffff;
+    width: 100%;
+    max-width: 1000px;
+    border-radius: 25px;
+    padding: 40px 35px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 35px 60px rgba(0,0,0,0.2);
+}
+
+/* Header */
+header {
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+    font-style: italic;
+    background: linear-gradient(45deg,#f8ffae,#715aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 50px;
+}
+
+/* Section cards */
+.section {
+    background: linear-gradient(145deg, #fdfbfb, #ebedee);
+    border-radius: 20px;
+    padding: 25px 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.07);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+}
+
+h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px;
+    font-style: italic;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: #34495e;
+}
+
+/* Inputs */
+input[type="text"], input[type="number"], select {
+    padding: 12px 15px;
+    margin: 5px 0 15px 0;
+    border-radius: 12px;
+    border: 1px solid #d1d9e6;
+    width: calc(100% - 30px);
+    font-size: 16px;
+    transition: 0.3s;
+    font-style: italic;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #ff758c;
+    box-shadow: 0 0 10px rgba(255,117,140,0.3);
+}
+
+/* Buttons */
+button {
+    background: linear-gradient(135deg,#c7749d,#efdcec);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    margin: 5px 5px 15px 0;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    font-style: italic;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+}
+
+/* Tasks list */
+#tasksList div {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e1e6eb;
+    font-weight: 500;
+    font-size: 16px;
+    color: #2c3e50;
+}
+
+#tasksList div:last-child { border-bottom: none; }
+
+/* Timer & Countdown */
+.timer {
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 12px;
+    color: #e74c3c;
+    text-align: center;
+}
+
+/* Icon inside buttons */
+.icon-btn { display: flex; align-items: center; gap: 8px; }
+
+select { border-radius: 12px; padding: 10px; font-size: 16px; transition: 0.3s; }
+select:hover { border-color: #43e97b; box-shadow: 0 0 8px rgba(67,233,123,0.2); }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <header><i class="fas fa-stopwatch"></i> TimeTask Analyzer</header>
+
+    <div class="section">
+        <button class="icon-btn" onclick="showTime()"><i class="fas fa-clock"></i> Show Current Time</button>
+        <span id="currentTime" class="timer"></span>
+    </div>
+
+    <div class="section">
+        <h3><i class="fas fa-plus-circle"></i> Add Task</h3>
+        <input type="text" id="taskName" placeholder="Task Name">
+        <div style="display:flex; gap:10px;">
+            <input type="number" id="taskH" placeholder="H" min="0" max="23">
+            <input type="number" id="taskM" placeholder="M" min="0" max="59">
+            <input type="number" id="taskS" placeholder="S" min="0" max="59">
+        </div>
+        <button class="icon-btn" onclick="addTask()"><i class="fas fa-tasks"></i> Add Task</button>
+    </div>
+
+    <div class="section">
+        <h3><i class="fas fa-list"></i> Tasks List</h3>
+        <div id="tasksList"></div>
+        <button class="icon-btn" onclick="viewTasks()"><i class="fas fa-sync-alt"></i> Refresh List</button>
+    </div>
+
+    <div class="section">
+        <h3><i class="fas fa-play-circle"></i> Start Task Countdown</h3>
+        <select id="taskSelect"></select>
+        <button class="icon-btn" onclick="startTask()"><i class="fas fa-hourglass-start"></i> Start</button>
+        <div id="countdown" class="timer"></div>
+    </div>
+
+    <div class="section">
+        <h3><i class="fas fa-stopwatch"></i> Stopwatch</h3>
+        <div id="stopwatchDisplay" class="timer">0 sec</div>
+        <button class="icon-btn" onclick="swStart()"><i class="fas fa-play"></i> Start</button>
+        <button class="icon-btn" onclick="swPause()"><i class="fas fa-pause"></i> Pause</button>
+        <button class="icon-btn" onclick="swReset()"><i class="fas fa-redo"></i> Reset</button>
+    </div>
+</div>
+
+<script>
+let tasks = [];
+let countdownTimer;
+let countdownRemaining = 0;
+
+// Show time in 12-hour format with AM/PM
+function showTime(){
+    const now = new Date();
+    const hours = now.getHours() % 12 || 12;
+    const minutes = String(now.getMinutes()).padStart(2,'0');
+    const seconds = String(now.getSeconds()).padStart(2,'0');
+    const ampm = now.getHours() >= 12 ? "PM" : "AM";
+    document.getElementById("currentTime").innerText = `${hours}:${minutes}:${seconds} ${ampm}`;
+}
+
+// Add task
+function addTask(){
+    const name = document.getElementById("taskName").value;
+    const h = parseInt(document.getElementById("taskH").value) || 0;
+    const m = parseInt(document.getElementById("taskM").value) || 0;
+    const s = parseInt(document.getElementById("taskS").value) || 0;
+    if(!name) { alert("Task name required"); return; }
+    tasks.push({name, h, m, s, completed:false});
+    updateTaskSelect();
+    alert("Task added!");
+}
+
+// Update task select dropdown
+function updateTaskSelect(){
+    const select = document.getElementById("taskSelect");
+    select.innerHTML = "";
+    tasks.forEach((task, i)=>{
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.text = task.name + (task.completed ? " [Done]" : "");
+        select.add(opt);
+    });
+}
+
+// View tasks
+function viewTasks(){
+    const container = document.getElementById("tasksList");
+    container.innerHTML = "";
+    tasks.forEach((task,i)=>{
+        const div = document.createElement("div");
+        div.innerText = `${i+1}. ${task.name} (${task.h}:${task.m}:${task.s}) ${task.completed ? "[Done]" : "[Pending]"}`;
+        container.appendChild(div);
+    });
+}
+
+// Start task countdown
+function startTask(){
+    if(countdownTimer) clearInterval(countdownTimer);
+    const index = parseInt(document.getElementById("taskSelect").value);
+    if(isNaN(index)) return;
+    const task = tasks[index];
+    countdownRemaining = task.h*3600 + task.m*60 + task.s;
+    countdownTimer = setInterval(()=>{
+        if(countdownRemaining <= 0){
+            clearInterval(countdownTimer);
+            document.getElementById("countdown").innerText = "TIME UP!";
+            tasks[index].completed = true;
+            alert("TIME UP! ⏰");
+        } else {
+            const h = Math.floor(countdownRemaining/3600);
+            const m = Math.floor((countdownRemaining%3600)/60);
+            const s = countdownRemaining%60;
+            document.getElementById("countdown").innerText = `${h}:${m}:${s}`;
+            countdownRemaining--;
+        }
+    },1000);
+}
+
+// Stopwatch
+let swTime = 0;
+let swInterval;
+function swStart(){
+    if(swInterval) clearInterval(swInterval);
+    swInterval = setInterval(()=>{
+        swTime++;
+        document.getElementById("stopwatchDisplay").innerText = swTime + " sec";
+    },1000);
+}
+function swPause(){ clearInterval(swInterval); }
+function swReset(){
+    clearInterval(swInterval);
+    swTime=0;
+    document.getElementById("stopwatchDisplay").innerText = "0 sec";
+}
+</script>
+</body>
+</html>
